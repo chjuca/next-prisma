@@ -11,7 +11,6 @@ function NewPage({params}) {
     const { id } = use(params);
 
     useEffect(()=> {
-
         if(id) {
             fetch(`/api/tasks/${id}`)
             .then(async res => {
