@@ -6,13 +6,22 @@ export async function GET() {
     return NextResponse.json(tasks)
 }
 
-export async function POST(request){
-    const {title, description} = await request.json()
+export async function POST(request) {
+    const { title, description, deadline, priority, status } = await request.json()
+
+    if (!title || !priority || !status) {
+        return NextResponse.json({ error: "Title, priority, and status are required" }, { status: 400 });
+    }
+
     const newTask = await prisma.task.create({
         data: {
             title,
-            description
+            description,
+            deadline: deadline ? new Date(deadline) : null,
+            priority,
+            status
         }
-    })
-    return NextResponse.json(newTask)
+    });
+
+    return NextResponse.json(newTask);
 }
