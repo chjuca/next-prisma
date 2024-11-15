@@ -2,7 +2,7 @@ import { prisma } from "@/libs/prima";
 import { NextResponse } from "next/server";
 
 export async function GET(_request, { params }) {
-    const { id } = params;
+    const { id } = await params;
     const task = await prisma.task.findUnique({
         where: {
             id: Number(id) 
@@ -16,7 +16,7 @@ export async function GET(_request, { params }) {
 
 export async function PUT(request, { params }) {
     const data = await request.json();
-    const { id } = params;
+    const { id } = await params;
 
     if (!data.title || !data.priority || !data.status) {
         return NextResponse.json(
