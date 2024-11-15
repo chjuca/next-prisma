@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 
 export const metadata = {
-  title: "Next App with Prisma",
+  title: "TaskManager with Prisma",
   description: "This is a practice project using Next.js, styled with Tailwind CSS.",
 };
 
