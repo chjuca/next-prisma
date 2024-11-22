@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LogoutButton from "./LogoutButton";
 
 export default function Navbar(){
     return (
@@ -17,6 +18,9 @@ export default function Navbar(){
                 <Link href="/about" className="text-gray-600 hover:text-gray-800 transition duration-300">
                   About
                 </Link>
+              </li>
+              <li>
+                <LogoutButton/>
               </li>
             </ul>
           </div>

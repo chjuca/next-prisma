@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FaCalendarAlt, FaExclamationCircle, FaCheckCircle, FaTrashAlt, FaSave } from 'react-icons/fa';
 import { useEffect, useState } from "react";
 import { use } from "react";
+import { useSession } from "next-auth/react";
 
 function NewPage({ params }) {
     const router = useRouter();
@@ -30,6 +31,25 @@ function NewPage({ params }) {
         }
     }, [id]);
 
+    const { data: session, status: isLoading } = useSession(); 
+
+    if (isLoading === "loading") {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+                <div className="flex flex-col items-center">
+                    <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="mt-4 text-lg font-semibold text-gray-700">Loading, please wait...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (isLoading === "unauthenticated") {
+        router.push("/login");
+    }
+
+    const {user} = session
+
     const onSubmit = async (e) => {
         e.preventDefault();
 
@@ -40,6 +60,10 @@ function NewPage({ params }) {
             priority: parseInt(priority, 10),
             status,
         };
+        
+        if(!id){
+            taskData.userId = user.id
+        }
 
         try {
             const response = await fetch(id ? `/api/tasks/${id}` : '/api/tasks', {

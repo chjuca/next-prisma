@@ -2,7 +2,7 @@ import TaskCard from "@/components/TaskCard";
 import { prisma } from "@/libs/prima";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
-import LogoutButton from "@/components/LogoutButton";
+import { redirect } from "next/navigation";
 
 async function loadTasks(id) {
     const tasks = await prisma.task.findMany({
@@ -18,6 +18,10 @@ export const dynamic="force-dynamic"
 export default async function HomePage() {
 
   const session = await getServerSession(authOptions);
+
+  if(!session) {
+    redirect("/login")
+  }
 
   const {id} = session
 
@@ -35,7 +39,6 @@ export default async function HomePage() {
           ))
         }
       </div>
-      <LogoutButton />
     </section>
   );
 }
