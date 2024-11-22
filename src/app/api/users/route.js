@@ -1,5 +1,5 @@
 import { prisma } from "@/libs/prima";
-import bcrypt from "bcrypt";
+import { hashPassword } from "@/utils/auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -14,7 +14,7 @@ export async function POST(request) {
         return NextResponse.json({ error: "Name, email, password and role are required" }, { status: 400 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
 
     const newUser = await prisma.user.create({
         data: {

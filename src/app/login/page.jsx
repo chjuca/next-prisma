@@ -1,16 +1,34 @@
 "use client"
 import { useState } from 'react';
+import { signIn } from "next-auth/react";
 import { FaExclamationCircle, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 function LoginPage(){
 
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState(null);
 
-    const onSubmit = () => {
-        console.log("submit")
-    }
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        
+        const res = await signIn("credentials", {
+            redirect: false,
+            email,
+            password,
+          });
+
+          console.log(res)
+      
+          if (res?.error) {
+            setError("Invalid credentials");
+          } else {
+            router.push("/");
+          }
+      };
 
     return (
         <div className="h-screen flex justify-center items-center bg-gray-100">
