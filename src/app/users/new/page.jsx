@@ -1,8 +1,8 @@
 'use client'
 
 import { useRouter } from "next/navigation";
-import { FaCalendarAlt, FaExclamationCircle, FaCheckCircle, FaTrashAlt, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useEffect, useState } from "react";
+import { FaExclamationCircle, FaTrashAlt, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useState } from "react";
 import { use } from "react";
 
 function NewUserPage({ params }) {
