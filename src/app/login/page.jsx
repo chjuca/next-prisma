@@ -1,8 +1,9 @@
 "use client"
 import { useState } from 'react';
 import { signIn } from "next-auth/react";
-import { FaExclamationCircle, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaExclamationCircle, FaSave, FaEye, FaEyeSlash, FaSignInAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 function LoginPage(){
 
@@ -20,8 +21,6 @@ function LoginPage(){
             email,
             password,
           });
-
-          console.log(res)
       
           if (res?.error) {
             setError("Invalid credentials");
@@ -79,9 +78,20 @@ function LoginPage(){
                 {/* Boton */}
                 <div className="flex justify-between">
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 flex items-center">
-                    <FaSave className="mr-2" /> Enter
+                    <FaSignInAlt className="mr-2" /> Sign In
                 </button>
                 </div>
+
+                        {/* Sección de Registro */}
+                <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                    Don't have an account?{" "}
+                    <Link href="/users/new" className="text-blue-500 hover:underline">
+                        Sign up
+                    </Link>
+                </p>
+                </div>
+
             </form>
         </div>
     )
