@@ -1,8 +1,6 @@
 import Navbar from "@/components/Navbar";
 import "./globals.css";
 import SessionWrapper from "./SessionWrapper";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
 
 export const metadata = {
   title: "Taskinator with Prisma",
@@ -11,13 +9,13 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
 
-  const session = await getServerSession(authOptions);
-
   return (
     <html lang="en">
       <body>
-        { session && <Navbar/>}
-        <SessionWrapper>{children}</SessionWrapper>
+        <SessionWrapper>
+          <Navbar/>
+          {children}
+          </SessionWrapper>
       </body>
     </html>
   );
