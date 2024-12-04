@@ -7,10 +7,15 @@ export async function GET() {
 }
 
 export async function POST(request) {
-    const { title, description, deadline, priority, status, userId } = await request.json()
+    const { title, description, deadline, priority, status, userId, assignedToId} = await request.json()
+    let assignedId = assignedToId
 
     if (!title || !priority || !status || !userId ) {
         return NextResponse.json({ error: "Title, priority, status and userId are required" }, { status: 400 });
+    }
+    
+    if (!assignedId) {
+        assignedId = userId
     }
 
     const newTask = await prisma.task.create({
@@ -20,7 +25,8 @@ export async function POST(request) {
             deadline: deadline ? new Date(deadline) : null,
             priority,
             status,
-            userId
+            userId,
+            assignedToId: assignedId
         }
     });
 

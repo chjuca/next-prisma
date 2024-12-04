@@ -7,9 +7,15 @@ import { redirect } from "next/navigation";
 async function loadTasks(id) {
     const tasks = await prisma.task.findMany({
       where: {
-        userId: id
-      }
-    })
+        OR: [
+          { userId: id },
+          { assignedToId: id },
+        ],
+      },      
+      include: {
+          assignedTo: true,
+        },
+  })
     return tasks
 }
 
@@ -23,9 +29,9 @@ export default async function HomePage() {
     redirect("/login")
   }
 
-  const {id} = session
+  const {user} = session
 
-  const tasks = await loadTasks(id)
+  const tasks = await loadTasks(user.id)
   return (
     <section className="container mx-auto">
       <div className="grid gap-5 mt-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

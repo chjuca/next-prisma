@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from "next/navigation";
-import { FaCalendarAlt, FaExclamationCircle, FaCheckCircle, FaTrashAlt, FaSave } from 'react-icons/fa';
+import { FaCalendarAlt, FaExclamationCircle, FaCheckCircle, FaTrashAlt, FaSave, FaUser } from 'react-icons/fa';
 import { useEffect, useState } from "react";
 import { use } from "react";
 import { useSession } from "next-auth/react";
@@ -14,9 +14,25 @@ function NewPage({ params }) {
     const [priority, setPriority] = useState(1);
     const [status, setStatus] = useState('PENDING');
 
+    const [users, setUsers] = useState([]);
+    const [assignedToId, setAssignedToId] = useState('');
+
     const { id } = use(params);
 
+    const fetchUsers = async () => {
+
+          fetch('/api/users')
+          .then(async res => {
+              const data = await res.json();
+              setUsers(data); 
+          })
+          .catch(error => {
+            console.error('Error fetching users', error);
+          })
+    }
+
     useEffect(() => {
+        fetchUsers();
         if (id) {
             fetch(`/api/tasks/${id}`)
                 .then(async (res) => {
@@ -26,6 +42,7 @@ function NewPage({ params }) {
                     setDeadline(data.deadline ? new Date(data.deadline).toISOString().substring(0, 10) : '');
                     setPriority(data.priority || 1);
                     setStatus(data.status || 'PENDING');
+                    setAssignedToId(data.assignedToId || id);
                 })
                 .catch((err) => console.error("Error fetching task:", err));
         }
@@ -59,6 +76,7 @@ function NewPage({ params }) {
             deadline: deadline ? new Date(deadline).toISOString() : null,
             priority: parseInt(priority, 10),
             status,
+            assignedToId: parseInt(assignedToId),
         };
         
         if(!id){
@@ -178,6 +196,27 @@ function NewPage({ params }) {
                     >
                         <option value="PENDING">Pending</option>
                         <option value="COMPLETED">Completed</option>
+                    </select>
+                </div>
+
+                {/* Asignar a usuario */}
+                <div className="mb-4">
+                    <label htmlFor="assignedToId" className="font-semibold text-gray-700 text-sm flex items-center gap-2">
+                        <FaUser className="text-blue-500" /> Assign to:
+                    </label>
+
+                    <select
+                        id="assignedToId"
+                        className="border border-gray-300 p-3 mb-4 w-full rounded-md text-gray-700 focus:ring-2 focus:ring-blue-500"
+                        onChange={(e) => setAssignedToId(e.target.value)}
+                        value={assignedToId}
+                    >
+                        <option value="">Select a user</option>
+                        {users.map((user) => (
+                        <option key={user.id} value={user.id}>
+                            {user.name}
+                        </option>
+                        ))}
                     </select>
                 </div>
 
