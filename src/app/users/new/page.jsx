@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FaExclamationCircle, FaTrashAlt, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { use } from "react";
 
 function NewUserPage({ params }) {
@@ -12,8 +12,28 @@ function NewUserPage({ params }) {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [role, setRole] = useState('USER');
+    const [selectedGroups, setSelectedGroups] = useState([]);
+    const [groups, setGroups] = useState([]); 
 
     const { id } = use(params);
+
+    useEffect(() => {
+        const fetchGroups = async () => {
+            try {
+                const response = await fetch('/api/groups');
+                if (response.ok) {
+                    const data = await response.json();
+                    setGroups(data);
+                } else {
+                    console.error("Failed to fetch groups");
+                }
+            } catch (error) {
+                console.error("Error fetching groups:", error);
+            }
+        };
+    
+        fetchGroups();
+    }, []);
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -23,6 +43,7 @@ function NewUserPage({ params }) {
             email,
             password,
             role,
+            groups: selectedGroups,
         };
 
         try {
@@ -123,6 +144,26 @@ function NewUserPage({ params }) {
                     >
                         <option value="USER">User</option>
                         <option value="ADMIN">Administrator</option>
+                    </select>
+                </div>
+
+                {/* Groups */}
+                <div className="mb-4">
+                    <label htmlFor="groups" className="font-semibold text-gray-700 text-sm flex items-center gap-2">
+                        <FaExclamationCircle className="text-blue-500" /> Groups:
+                    </label>
+                    <select
+                        id="groups"
+                        className="border border-gray-300 p-3 mb-4 w-full rounded-md text-gray-700 focus:ring-2 focus:ring-blue-500"
+                        onChange={(e) => setSelectedGroups(Array.from(e.target.selectedOptions, option => option.value))}
+                        value={selectedGroups}
+                        multiple
+                    >
+                        {groups.map((group) => (
+                            <option key={group.id} value={group.id}>
+                                {group.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
 

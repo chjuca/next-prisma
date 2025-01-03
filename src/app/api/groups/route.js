@@ -6,7 +6,7 @@ export async function GET() {
     return NextResponse.json(groups)
 }
 
-export async function POST(name, description, userIds) {
+export async function POST(request) {
 
     const {name, description, userIds} = await request.json()
 

@@ -19,9 +19,13 @@ function NewPage({ params }) {
 
     const { id } = use(params);
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (userID) => {
 
-          fetch('/api/users')
+        if (!userID) {
+            setUsers([]); 
+        }
+
+          fetch(`/api/users/${userID}/groups`)
           .then(async res => {
               const data = await res.json();
               setUsers(data); 
@@ -31,24 +35,28 @@ function NewPage({ params }) {
           })
     }
 
-    useEffect(() => {
-        fetchUsers();
-        if (id) {
-            fetch(`/api/tasks/${id}`)
-                .then(async (res) => {
-                    const data = await res.json();
-                    setTitle(data.title);
-                    setDescription(data.description || '');
-                    setDeadline(data.deadline ? new Date(data.deadline).toISOString().substring(0, 10) : '');
-                    setPriority(data.priority || 1);
-                    setStatus(data.status || 'PENDING');
-                    setAssignedToId(data.assignedToId || id);
-                })
-                .catch((err) => console.error("Error fetching task:", err));
-        }
-    }, [id]);
-
     const { data: session, status: isLoading } = useSession(); 
+    
+    useEffect(() => {
+
+        if (isLoading === "authenticated" && session?.user?.id) {
+            fetchUsers(session.user.id);
+
+            if (id) {
+                fetch(`/api/tasks/${id}`)
+                    .then(async (res) => {
+                        const data = await res.json();
+                        setTitle(data.title);
+                        setDescription(data.description || '');
+                        setDeadline(data.deadline ? new Date(data.deadline).toISOString().substring(0, 10) : '');
+                        setPriority(data.priority || 1);
+                        setStatus(data.status || 'PENDING');
+                        setAssignedToId(data.assignedToId || id);
+                    })
+                    .catch((err) => console.error("Error fetching task:", err));
+            }
+        }
+    }, [id, session, isLoading]);
 
     if (isLoading === "loading") {
         return (

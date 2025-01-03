@@ -2,8 +2,7 @@ import { prisma } from "@/libs/prima";
 import { NextResponse } from "next/server";
 
 export async function GET(_request, { params }) {
-    const { id } = params;
-
+    const { id } = await params;
     try {
         const userGroups = await prisma.group.findMany({
             where: {
@@ -14,7 +13,13 @@ export async function GET(_request, { params }) {
                 },
             },
             include: {
-                users: true,
+                users: {
+                    select: {
+                        id: true, 
+                        name: true,
+                        email: true
+                    },
+                }
             },
         });
 
@@ -22,13 +27,9 @@ export async function GET(_request, { params }) {
             return NextResponse.json({ error: "User is not part of any group" }, { status: 404 });
         }
 
-        const groupMembers = userGroups.map(group => ({
-            groupId: group.id,
-            groupName: group.name,
-            members: group.users,
-        }));
+        const groupMembers = userGroups.map(group => (group.users));
 
-        return NextResponse.json(groupMembers);
+        return NextResponse.json(groupMembers.flat(1));
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }

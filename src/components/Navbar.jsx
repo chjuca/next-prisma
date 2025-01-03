@@ -29,6 +29,11 @@ export default function Navbar(){
                 </Link>
               </li>
               <li>
+                <Link href="/group/new" className="text-gray-600 hover:text-gray-800 transition duration-300">
+                  New Group
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="text-gray-600 hover:text-gray-800 transition duration-300">
                   About
                 </Link>
